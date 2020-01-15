@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <COMPONENT> 
-  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="1.0" STATUS="DEV" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20191211" STARTABLE="true" SCHEMA_AUTO_PROPAGATE="false"> 
+  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="1.1" STATUS="DEV" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20200115" STARTABLE="true" SCHEMA_AUTO_PROPAGATE="false"> 
     <SIGNATURE/> 
   </HEADER>  
   <FAMILIES> 
@@ -24,6 +24,9 @@
     <PARAMETER NAME="SOURCE_SELECT" FIELD="MEMO_SQL" NUM_ROW="20" NB_LINES="10" REQUIRED="true"> 
       <DEFAULT>"select * from source_table"</DEFAULT> 
     </PARAMETER>  
+    <PARAMETER NAME="SOURCE_SELECT_HINT" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="21"> 
+      <DEFAULT>The source select will be aliased as s. You can use select * from my_table.</DEFAULT> 
+    </PARAMETER>  
     <PARAMETER NAME="TARGET_TABLE" FIELD="TEXT" NUM_ROW="25" REQUIRED="true"> 
       <DEFAULT>"my_target_table"</DEFAULT> 
     </PARAMETER>  
@@ -39,6 +42,9 @@
     <PARAMETER NAME="UPDATE_WHERE" FIELD="MEMO_SQL" NUM_ROW="44" NB_LINES="4" REQUIRED="true" SHOW_IF="(ALLOW_UPDATE == 'true') and (ENABLE_UPDATE_WHERE == 'true')"> 
       <DEFAULT>"s.data_status != 'deleted'"</DEFAULT> 
     </PARAMETER>  
+    <PARAMETER NAME="UPDATE_WHERE_HINT" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="45" SHOW_IF="(ALLOW_UPDATE == 'true') and (ENABLE_UPDATE_WHERE == 'true')"> 
+      <DEFAULT>Use for source fields the s as table alias!</DEFAULT> 
+    </PARAMETER>  
     <PARAMETER NAME="ALLOW_DELETE" FIELD="CHECK" NUM_ROW="50" REQUIRED="true" SHOW_IF="ALLOW_UPDATE == 'true'"> 
       <DEFAULT>true</DEFAULT> 
     </PARAMETER>  
@@ -47,6 +53,9 @@
     </PARAMETER>  
     <PARAMETER NAME="DELETE_WHERE" FIELD="MEMO_SQL" NUM_ROW="54" NB_LINES="4" REQUIRED="true" SHOW_IF="(ALLOW_UPDATE == 'true') and (ALLOW_DELETE == 'true') and (ENABLE_DELETE_WHERE == 'true')"> 
       <DEFAULT>"s.data_status = 'deleted'"</DEFAULT> 
+    </PARAMETER>  
+    <PARAMETER NAME="DELETE_WHERE_HINT" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="55" SHOW_IF="(ALLOW_UPDATE == 'true') and (ALLOW_DELETE == 'true') and (ENABLE_DELETE_WHERE == 'true')"> 
+      <DEFAULT>Use for source fields the s as table alias!</DEFAULT> 
     </PARAMETER>  
     <PARAMETER NAME="ALLOW_EXCLUDE_COLUMNS" FIELD="CHECK" NUM_ROW="60"> 
       <DEFAULT>false</DEFAULT> 
@@ -70,13 +79,13 @@
     </PARAMETER> 
   </PARAMETERS>  
   <ADVANCED_PARAMETERS> 
-    <PARAMETER NAME="RELEASE_LABEL_20191211" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
-      <DEFAULT>Release: 1.0 build at: 20191211</DEFAULT>
+    <PARAMETER NAME="RELEASE_LABEL_20200115" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
+      <DEFAULT>Release: 1.1 build at: 20200115</DEFAULT>
     </PARAMETER>
   </ADVANCED_PARAMETERS>  
   <CODEGENERATION> 
     <IMPORTS> 
-      <IMPORT NAME="jlo-talendcomp-oraclemerge" MODULE="jlo-talendcomp-oraclemerge-1.0.jar" MVN="mvn:org.talend.libraries/jlo-talendcomp-oraclemerge-1.0/6.0.0-SNAPSHOT" REQUIRED="true"/>
+      <IMPORT NAME="jlo-talendcomp-oraclemerge" MODULE="jlo-talendcomp-oraclemerge-1.1.jar" MVN="mvn:org.talend.libraries/jlo-talendcomp-oraclemerge-1.1/6.0.0-SNAPSHOT" REQUIRED="true"/>
       <IMPORT NAME="log4j" MODULE="log4j-1.2.17.jar" MVN="mvn:org.talend.libraries/log4j-1.2.17/6.0.0-SNAPSHOT" REQUIRED="true"/>
     </IMPORTS> 
   </CODEGENERATION>  

@@ -122,7 +122,7 @@ public class OracleMerge {
 				if (firstLoop) {
 					firstLoop = false;
 				} else {
-					sb.append(",");
+					sb.append(" and ");
 				}
 				sb.append("t.");
 				sb.append(pkColumnName);
