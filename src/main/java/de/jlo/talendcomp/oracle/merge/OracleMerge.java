@@ -356,6 +356,9 @@ public class OracleMerge {
 	public void setSourceSelectCode(String sourceSelectCode) {
 		if (sourceSelectCode != null && sourceSelectCode.trim().isEmpty() == false) {
 			this.sourceSelectCode = sourceSelectCode.trim();
+			if (this.sourceSelectCode.endsWith(";")) {
+				this.sourceSelectCode = this.sourceSelectCode.substring(0, this.sourceSelectCode.length() - 1);
+			}
 		}
 	}
 
