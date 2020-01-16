@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <COMPONENT> 
-  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="1.1" STATUS="DEV" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20200115" STARTABLE="true" SCHEMA_AUTO_PROPAGATE="false"> 
+  <HEADER PLATEFORM="ALL" SERIAL="" VERSION="1.2" STATUS="DEV" COMPATIBILITY="ALL" AUTHOR="Jan Lolling" RELEASE_DATE="20200116" STARTABLE="true" SCHEMA_AUTO_PROPAGATE="false"> 
     <SIGNATURE/> 
   </HEADER>  
   <FAMILIES> 
@@ -79,13 +79,13 @@
     </PARAMETER> 
   </PARAMETERS>  
   <ADVANCED_PARAMETERS> 
-    <PARAMETER NAME="RELEASE_LABEL_20200115" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
-      <DEFAULT>Release: 1.1 build at: 20200115</DEFAULT>
+    <PARAMETER NAME="RELEASE_LABEL_20200116" FIELD="LABEL" COLOR="0;0;0" NUM_ROW="900">
+      <DEFAULT>Release: 1.2 build at: 20200116</DEFAULT>
     </PARAMETER>
   </ADVANCED_PARAMETERS>  
   <CODEGENERATION> 
     <IMPORTS> 
-      <IMPORT NAME="jlo-talendcomp-oraclemerge" MODULE="jlo-talendcomp-oraclemerge-1.1.jar" MVN="mvn:org.talend.libraries/jlo-talendcomp-oraclemerge-1.1/6.0.0-SNAPSHOT" REQUIRED="true"/>
+      <IMPORT NAME="jlo-talendcomp-oraclemerge" MODULE="jlo-talendcomp-oraclemerge-1.2.jar" MVN="mvn:org.talend.libraries/jlo-talendcomp-oraclemerge-1.2/6.0.0-SNAPSHOT" REQUIRED="true"/>
       <IMPORT NAME="log4j" MODULE="log4j-1.2.17.jar" MVN="mvn:org.talend.libraries/log4j-1.2.17/6.0.0-SNAPSHOT" REQUIRED="true"/>
     </IMPORTS> 
   </CODEGENERATION>  
