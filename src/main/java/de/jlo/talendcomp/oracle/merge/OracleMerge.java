@@ -34,6 +34,7 @@ public class OracleMerge {
 	private String deleteWhereCondition = null;
 	private String currentMergeSQLCode = null;
 	private boolean doCommit = true;
+	private String coalesceNullTerm = "'0'";
 	
 	public OracleMerge(Connection connection) {
 		this.connection = connection;
@@ -95,7 +96,9 @@ public class OracleMerge {
 			if (targetTable.getFieldCount() == 0) {
 				throw new Exception("Table: " + targetTableName + " does not have any fields!");
 			}
-			if (targetTable.getPrimaryKeyConstraint() == null) {
+			// if there is no primary key, try to set them by unique index
+			targetTable.setupPrimaryKeyFieldsByUniqueIndex();
+			if (targetTable.hasPrimaryKeyFields() == false) {
 				throw new Exception("Table: " + targetTableName + " does not have a primary key!");
 			}
 		}
@@ -114,22 +117,37 @@ public class OracleMerge {
 		sb.append("\n) s");
 		sb.append("\non (");
 		boolean firstLoop = true;
-		for (String pkColumnName : targetTable.getPrimaryKeyFieldNames()) {
-			if (isFixedColumn(pkColumnName) == false) {
-				if (isExcludedColumn(pkColumnName)) {
-					throw new Exception("A primary key column cannot excluded.");
-				}
-				if (firstLoop) {
-					firstLoop = false;
+		for (int f = 0, n = targetTable.getFieldCount(); f < n; f++) {
+			SQLField field = targetTable.getFieldAt(f);
+			if (field.isPrimaryKey()) {
+				if (isFixedColumn(field.getName()) == false) {
+					if (isExcludedColumn(field.getName())) {
+						throw new Exception("A primary key column cannot excluded.");
+					}
+					if (firstLoop) {
+						firstLoop = false;
+					} else {
+						sb.append(" and ");
+					}
+					if (field.isNullValueAllowed()) {
+						sb.append("coalesce(t.");
+						sb.append(field.getName());
+						sb.append(",");
+						sb.append(coalesceNullTerm);
+						sb.append(")=coalesce(s.");
+						sb.append(field.getName());
+						sb.append(",");
+						sb.append(coalesceNullTerm);
+						sb.append(")");
+					} else {
+						sb.append("t.");
+						sb.append(field.getName());
+						sb.append("=s.");
+						sb.append(field.getName());
+					}
 				} else {
-					sb.append(" and ");
+					throw new Exception("A primary key column cannot be set or compared with a fixed value.");
 				}
-				sb.append("t.");
-				sb.append(pkColumnName);
-				sb.append("=s.");
-				sb.append(pkColumnName);
-			} else {
-				throw new Exception("A primary key column cannot be set or compared with a fixed value.");
 			}
 		}
 		sb.append(")\n");

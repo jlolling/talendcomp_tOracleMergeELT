@@ -741,8 +741,8 @@ public final class SQLDataModel extends SQLObject implements Comparable<SQLDataM
 							Object nonUnique = rs.getObject("NON_UNIQUE");
 							if (nonUnique instanceof Boolean) {
 								unique = !((Boolean) nonUnique).booleanValue();
-							} else if (nonUnique instanceof Integer) {
-								unique = ((Integer) nonUnique).intValue() == 0;
+							} else if (nonUnique instanceof Number) {
+								unique = ((Number) nonUnique).intValue() == 0;
 							} else if (nonUnique instanceof String) {
 								unique = !Boolean.parseBoolean((String) nonUnique);
 							}

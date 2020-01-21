@@ -16,9 +16,9 @@ public class TestOracleMerge {
 	
 	private Connection connection = null;
 	private static final String DRIVER_CLASS = "oracle.jdbc.driver.OracleDriver";
-	private static final String URL = "jdbc:oracle:thin:@//localhost:1521/DB";
-	private static final String USER = "USER";
-	private static final String PW = "pw";
+	private static final String URL = "jdbc:oracle:thin:@//vmh-lcag-hamosmig-db.dcx.dlh.de:1850/PAMOSDB";
+	private static final String USER = "AMOS_TRANSFER_MIG";
+	private static final String PW = "AMOS11admin";
 	
 	@Before
 	public void connect() throws Exception {
@@ -36,7 +36,7 @@ public class TestOracleMerge {
 	@Test
 	public void loadTable() throws Exception {
 		OracleMerge m = new OracleMerge(connection);
-		String expectedTableName = "TABLE_TEST_E";
+		String expectedTableName = "XTEST";
 		m.setTargetTableName(expectedTableName);
 		m.init();
 		SQLTable t = m.getTargetSQLTable();
@@ -74,26 +74,27 @@ public class TestOracleMerge {
 	@Test
 	public void testCreateMergeInsertOnly2() throws Exception {
 		OracleMerge m = new OracleMerge(connection);
-		m.setSourceSelectCode("select * from TABLE_TEST_S");
-		String expectedTableName = "TABLE_TEST_E";
+		m.setSourceSelectCode("select * from S_TEST");
+		String expectedTableName = "XTEST";
 		m.setAllowInsert(true);
 		m.setAllowUpdate(false);
 		m.setAllowDelete(false);
+		m.setFixedColumnValue("JOB_INSTANCE_ID", 99);
 		m.setFixedColumnValue("FILE_ID", null);
+		m.setFixedColumnValue("MAPPING_ID", 2);
 		m.setFixedColumnValue("AMOS_IMPORT_OK", 0);
-		m.setFixedColumnValue("AMOS_IMPORT_ATTEMPTS", 0);
 		m.setTargetTableName(expectedTableName);
 		m.init();
 		String actual = m.buildMergeStatement();
 		System.out.println(actual);
-		String expected = "merge into TABLE_TEST_E t\n"
+		String expected = "merge into XTEST t\n"
 			    + "using (\n"
-			    + "select * from TABLE_TEST_S\n"
+			    + "select * from S_TEST\n"
 			    + ") s\n"
-			    + "on (t.HASH_KEY=s.HASH_KEY)\n"
+			    + "on (coalesce(t.CONCODE,'0')=coalesce(s.CONCODE,'0') and coalesce(t.ACTYPE,'0')=coalesce(s.ACTYPE,'0'))\n"
 			    + "when not matched then\n"
-			    + "  insert (t.ACGROUP,t.DESCRIPTION,t.JOB_INSTANCE_ID,t.HASH_KEY,t.FILE_ID,t.AMOS_IMPORT_OK,t.AMOS_IMPORT_ATTEMPTS)\n"
-			    + "  values (s.ACGROUP,s.DESCRIPTION,s.JOB_INSTANCE_ID,s.HASH_KEY,?,?,?)";
+			    + "  insert (t.CONCODE,t.ACTYPE,t.JOB_INSTANCE_ID,t.FILE_ID,t.MAPPING_ID,t.AMOS_IMPORT_OK)\n"
+			    + "  values (s.CONCODE,s.ACTYPE,?,?,?,?)";
 		assertEquals("merge statement wrong", expected, actual);
 		m.setDoCommit(true);
 		m.execute();

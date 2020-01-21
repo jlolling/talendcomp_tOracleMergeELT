@@ -87,7 +87,7 @@ public final class SQLField extends SQLObject implements Comparable<SQLField>, F
 	}
 	
 	public boolean isNullValueAllowed() {
-		return nullEnabled && isPrimaryKey == false;
+		return nullEnabled;
 	}
 
 	public static void addCustomTypeBasictypePair(int sqlType, int basicType) {
