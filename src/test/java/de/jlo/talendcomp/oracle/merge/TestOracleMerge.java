@@ -310,4 +310,61 @@ public class TestOracleMerge {
 		assertEquals("merge statement wrong", expected, actual);
 	}
 
+	@Test
+	public void testCreateMergeInsertAndUpdateOnlyColumnsWithDelete() throws Exception {
+		OracleMerge m = new OracleMerge(connection);
+		m.setAllowInsert(false);
+		m.setAllowUpdate(true);
+		m.addUpdateOnlyColumn("JOB_GUID");
+		m.addUpdateOnlyColumn("WORK_ITEM");
+		m.setAllowDelete(true);
+		m.setUpdateWhereCondition("RETURN_CODE = 0");
+		m.setDeleteWhereCondition("RETURN_CODE > 0");
+		m.addExcludeColumn("JOB_DISPLAY_NAME");
+		m.setFixedColumnValue("PROCESS_INSTANCE_ID", 99);
+		m.setSourceSelectCode("select * from JOB_INSTANCE_STATUS_TEST");
+		String expectedTableName = "JOB_INSTANCE_STATUS";
+		m.setTargetTableName(expectedTableName);
+		m.init();
+		String actual = m.buildMergeStatement();
+		System.out.println(actual);
+		String expected = "merge into JOB_INSTANCE_STATUS t\n"
+			    + "using (\n"
+			    + "select * from JOB_INSTANCE_STATUS_TEST\n"
+			    + ") s\n"
+			    + "on (t.JOB_INSTANCE_ID=s.JOB_INSTANCE_ID)\n"
+			    + "when matched then\n"
+			    + "  update set\n"
+			    + "    t.JOB_GUID=s.JOB_GUID,\n"
+			    + "    t.WORK_ITEM=s.WORK_ITEM,\n"
+			    + "    t.PROCESS_INSTANCE_ID=?\n"
+			    + "  where RETURN_CODE = 0\n"
+			    + "  delete where RETURN_CODE > 0\n";
+		assertEquals("merge statement wrong", expected, actual);
+	}
+
+	@Test
+	public void testCreateMergeInsertAndUpdateOnlyColumns() throws Exception {
+		OracleMerge m = new OracleMerge(connection);
+		m.setAllowInsert(false);
+		m.setAllowUpdate(true);
+		m.addUpdateOnlyColumn("AMOS_IMPORT_OK");
+		m.setAllowDelete(false);
+		m.setSourceSelectCode("select * from Z_XDHECT");
+		String expectedTableName = "XDHECT";
+		m.setTargetTableName(expectedTableName);
+		m.init();
+		String actual = m.buildMergeStatement();
+		System.out.println(actual);
+		String expected = "merge into XDHECT t\n"
+			    + "using (\n"
+			    + "select * from Z_XDHECT\n"
+			    + ") s\n"
+			    + "on (t.DOCNO=s.DOCNO and t.DOCTYPE=s.DOCTYPE and t.REVISION=s.REVISION and t.ISSUEDBY=s.ISSUEDBY)\n"
+			    + "when matched then\n"
+			    + "  update set\n"
+			    + "    t.AMOS_IMPORT_OK=s.AMOS_IMPORT_OK\n";
+		assertEquals("merge statement wrong", expected, actual);
+	}
+
 }

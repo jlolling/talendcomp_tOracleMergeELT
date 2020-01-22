@@ -42,6 +42,11 @@
 		fixedColumnValueList = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__FIXED_COLUMN_VALUES__");
 	}
 	boolean doCommit = "true".equals(ElementParameterParser.getValue(node, "__DO_COMMIT__"));
+	boolean allowUpdateOnlyColumns = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_UPDATE_COLUMNS__"));
+	List<Map<String, String>> updateOnlyColumns = null;
+	if (allowUpdateOnlyColumns) {
+		updateOnlyColumns = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__UPDATE_ONLY_COLUMNS__");
+	}
 %>
 	de.jlo.talendcomp.oracle.merge.OracleMerge <%=cid%> = new de.jlo.talendcomp.oracle.merge.OracleMerge((java.sql.Connection) globalMap.get("conn_" + "<%=connCompName%>"));
    // use our own query as source
@@ -49,6 +54,11 @@
 	<%=cid%>.setSourceSelectCode(<%=cid%>_query);
 	<%=cid%>.setAllowInsert(<%=allowInsert%>);
 	<%=cid%>.setAllowUpdate(<%=allowUpdate%>);
+<%	if (updateOnlyColumns != null) {
+      for (Map<String, String> entry : updateOnlyColumns) { %>
+	<%=cid%>.addUpdateOnlyColumn(<%=entry.get("COLUMN")%>);
+<%    } %>
+<%	} %>
 	<%=cid%>.setAllowDelete(<%=allowDelete%>);
 	<%=cid%>.setUpdateWhereCondition(<%=updateWhereCondition%>);
 	<%=cid%>.setDeleteWhereCondition(<%=deleteWhereCondition%>);

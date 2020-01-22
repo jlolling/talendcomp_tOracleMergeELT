@@ -27,6 +27,7 @@ public class OracleMerge {
 	private SQLTable targetTable = null;
 	private List<ColumnValue> fixedColumnValueList = new ArrayList<ColumnValue>();
 	private List<String> excludeColumnList = new ArrayList<>();
+	private List<String> updateOnlyColumnList = new ArrayList<>();
 	private boolean allowInsert = true;
 	private boolean allowUpdate = true;
 	private boolean allowDelete = false;
@@ -171,6 +172,9 @@ public class OracleMerge {
 			if (isExcludedColumn(fieldName)) {
 				continue;
 			}
+			if (isUpdateColumnEnabled(fieldName) == false) {
+				continue;
+			}
 			if (firstLoop) {
 				firstLoop = false;
 				sb.append("    t.");
@@ -181,6 +185,7 @@ public class OracleMerge {
 			sb.append("=s.");
 			sb.append(fieldName);
 		}
+		// add fixed value columns
 		for (String fieldName : targetTable.getNonPrimaryKeyFieldNames()) {
 			if (isFixedColumn(fieldName)) {
 				if (firstLoop) {
@@ -209,7 +214,7 @@ public class OracleMerge {
 	
 	private boolean isFixedColumn(String name) {
 		for (ColumnValue cv : fixedColumnValueList) {
-			if (name.equals(cv.getColumnName())) {
+			if (name.equalsIgnoreCase(cv.getColumnName())) {
 				return true;
 			}
 		}
@@ -218,7 +223,7 @@ public class OracleMerge {
 	
 	private boolean isExcludedColumn(String name) {
 		for (String s : excludeColumnList) {
-			if (name.equals(s)) {
+			if (name.equalsIgnoreCase(s)) {
 				return true;
 			}
 		}
@@ -436,6 +441,22 @@ public class OracleMerge {
 		if (columnName != null && columnName.trim().isEmpty() == false) {
 			if (excludeColumnList.contains(columnName.trim().toUpperCase()) == false) {
 				excludeColumnList.add(columnName.trim().toUpperCase());
+			}
+		}
+	}
+	
+	public boolean isUpdateColumnEnabled(String column) {
+		if (updateOnlyColumnList != null && updateOnlyColumnList.size() > 0) {
+			return updateOnlyColumnList.contains(column.trim().toUpperCase());
+		} else {
+			return true; // we have no updateColumn list, therefore all columns can be updated
+		}
+	}
+
+	public void addUpdateOnlyColumn(String columnName) {
+		if (columnName != null && columnName.trim().isEmpty() == false) {
+			if (updateOnlyColumnList.contains(columnName.trim().toUpperCase()) == false) {
+				updateOnlyColumnList.add(columnName.trim().toUpperCase());
 			}
 		}
 	}
