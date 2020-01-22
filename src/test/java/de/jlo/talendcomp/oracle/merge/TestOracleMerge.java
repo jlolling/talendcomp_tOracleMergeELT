@@ -367,4 +367,19 @@ public class TestOracleMerge {
 		assertEquals("merge statement wrong", expected, actual);
 	}
 
+	@Test
+	public void testCreateMergeInsertAndUpdateCheckKeywords() throws Exception {
+		OracleMerge m = new OracleMerge(connection);
+		m.setAllowInsert(true);
+		m.setAllowUpdate(true);
+//		m.addUpdateOnlyColumn("SIZE");
+		m.setAllowDelete(false);
+		m.addKeyword("weight");
+		m.setSourceSelectCode("select * from Z_XPART");
+		String expectedTableName = "XPART";
+		m.setTargetTableName(expectedTableName);
+		m.init();
+		String actual = m.buildMergeStatement();
+		System.out.println(actual);
+	}
 }

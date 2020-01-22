@@ -1,5 +1,6 @@
 package de.jlo.datamodel;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -309,6 +310,38 @@ public final class SQLField extends SQLObject implements Comparable<SQLField>, F
 	@Override
 	public Class<?> getJavaClass() {
 		return javaClass;
+	}
+
+	@Override
+	public boolean isNumber() {
+		if (type == Types.BIGINT || type == Types.DECIMAL || type == Types.DOUBLE || type == Types.FLOAT || type == Types.INTEGER || type == Types.NUMERIC || type == Types.SMALLINT || type == Types.TINYINT) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isDate() {
+		if (type == Types.DATE || type == Types.TIME || type == Types.TIME_WITH_TIMEZONE || type == Types.TIMESTAMP || type == Types.TIMESTAMP_WITH_TIMEZONE) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isString() {
+		if (type == Types.CHAR || type == Types.CLOB || type == Types.LONGNVARCHAR || type == Types.LONGVARCHAR || type == Types.NCHAR || type == Types.NCLOB || type == Types.NVARCHAR || type == Types.VARCHAR) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isBoolean() {
+		if (type == Types.BIT || type == Types.BOOLEAN) {
+			return true;
+		}
+		return false;
 	}
 	
 }

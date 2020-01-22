@@ -35,11 +35,47 @@ public class OracleMerge {
 	private String deleteWhereCondition = null;
 	private String currentMergeSQLCode = null;
 	private boolean doCommit = true;
-	private String coalesceNullTerm = "'0'";
+	private String coalesceNullTermStr = "'0'";
+	private String coalesceNullTermNumber= "-1";
+	private String coalesceNullTermDate= "to_date('1970-01-01','YYYY-MM-DD')";
+	private List<String> keywords = new ArrayList<>();
 	
 	public OracleMerge(Connection connection) {
 		this.connection = connection;
-	}
+		keywords.add("DATE");
+		keywords.add("TEXT");
+		keywords.add("SIZE");
+		keywords.add("FROM");
+		keywords.add("WHERE");
+		keywords.add("TO");
+		keywords.add("TIME");
+		keywords.add("TIMESTAMP");
+		keywords.add("INT");		
+		keywords.add("SYSTEM");
+		keywords.add("ZONE");
+		keywords.add("MASTER");
+		keywords.add("SCOPE");
+		keywords.add("NUMBER");
+		keywords.add("REFRESH");
+		keywords.add("SIZE");
+		keywords.add("VALUE");
+		keywords.add("VALUES");
+		keywords.add("SPECIFICATION");
+		keywords.add("HEADER");
+		keywords.add("TIME");
+		keywords.add("LIMIT");
+		keywords.add("TABLE");
+		keywords.add("TABLES");
+		keywords.add("COMMENT");
+		keywords.add("MINIMUM");
+		keywords.add("DATE");
+		keywords.add("ACCOUNT");
+		keywords.add("PASSWORD");
+		keywords.add("STORE");
+		keywords.add("TYPE");
+		keywords.add("LABEL");
+		keywords.add("LIST");
+		keywords.add("UNLIMITED");	}
 
 	public void init() throws Exception {
 		if (connection == null) {
@@ -134,11 +170,11 @@ public class OracleMerge {
 						sb.append("coalesce(t.");
 						sb.append(field.getName());
 						sb.append(",");
-						sb.append(coalesceNullTerm);
+						sb.append(coalesceNullTermStr);
 						sb.append(")=coalesce(s.");
 						sb.append(field.getName());
 						sb.append(",");
-						sb.append(coalesceNullTerm);
+						sb.append(coalesceNullTermStr);
 						sb.append(")");
 					} else {
 						sb.append("t.");
@@ -181,9 +217,9 @@ public class OracleMerge {
 			} else {
 				sb.append(",\n    t.");
 			}
-			sb.append(fieldName);
+			sb.append(getColumnName(fieldName));
 			sb.append("=s.");
-			sb.append(fieldName);
+			sb.append(getColumnName(fieldName));
 		}
 		// add fixed value columns
 		for (String fieldName : targetTable.getNonPrimaryKeyFieldNames()) {
@@ -194,7 +230,7 @@ public class OracleMerge {
 				} else {
 					sb.append(",\n    t.");
 				}
-				sb.append(fieldName);
+				sb.append(getColumnName(fieldName));
 				sb.append("=?");
 			}
 		}
@@ -229,6 +265,14 @@ public class OracleMerge {
 		}
 		return false;
 	}
+	
+	private String getColumnName(String fieldName) {
+		if (isKeyword(fieldName)) {
+			return "\"" + fieldName + "\"";
+		} else {
+			return fieldName;
+		}
+	}
 
 	private void buildInsertPart(StringBuilder sb) {
 		sb.append("when not matched then\n  insert (");
@@ -246,7 +290,7 @@ public class OracleMerge {
 			} else {
 				sb.append(",t.");
 			}
-			sb.append(fieldName);
+			sb.append(getColumnName(fieldName));
 		}
 		for (ColumnValue cv : fixedColumnValueList) {
 			if (firstLoop) {
@@ -272,7 +316,7 @@ public class OracleMerge {
 			} else {
 				sb.append(",s.");
 			}
-			sb.append(fieldName);
+			sb.append(getColumnName(fieldName));
 		}
 		for (int i = 1; i <= fixedColumnValueList.size(); i++) {
 			if (firstLoop) {
@@ -467,6 +511,56 @@ public class OracleMerge {
 
 	public void setDoCommit(boolean doCommit) {
 		this.doCommit = doCommit;
+	}
+
+	public String getCoalesceNullTermStr() {
+		return coalesceNullTermStr;
+	}
+
+	public void setCoalesceNullTermStr(String coalesceNullTermStr) {
+		if (coalesceNullTermStr != null && coalesceNullTermStr.trim().isEmpty() == false) {
+			this.coalesceNullTermStr = coalesceNullTermStr;
+		}
+	}
+
+	public String getCoalesceNullTermNumber() {
+		return coalesceNullTermNumber;
+	}
+
+	public void setCoalesceNullTermNumber(String coalesceNullTermNumber) {
+		if (coalesceNullTermNumber != null && coalesceNullTermNumber.trim().isEmpty() == false) {
+			this.coalesceNullTermNumber = coalesceNullTermNumber;
+		}
+	}
+
+	public String getCoalesceNullTermDate() {
+		return coalesceNullTermDate;
+	}
+
+	public void setCoalesceNullTermDate(String coalesceNullTermDate) {
+		if (coalesceNullTermDate != null && coalesceNullTermDate.trim().isEmpty() == false) {
+			this.coalesceNullTermDate = coalesceNullTermDate;
+		}
+	}
+	
+	public void addKeyword(String keyword) {
+		if (keyword != null && keyword.trim().isEmpty() == false) {
+			keyword = keyword.trim().toUpperCase();
+			if (keywords.contains(keyword) == false) {
+				keywords.add(keyword);
+			}
+		}
+	}
+	
+	private boolean isKeyword(String fieldName) {
+		if (fieldName != null) {
+			fieldName = fieldName.trim().toUpperCase();
+		}
+		if (keywords.contains(fieldName)) {
+			return true;
+		} else {
+			return fieldName.startsWith("SYS_");
+		}
 	}
 	
 }

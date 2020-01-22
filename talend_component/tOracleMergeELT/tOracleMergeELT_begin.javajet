@@ -47,8 +47,29 @@
 	if (allowUpdateOnlyColumns) {
 		updateOnlyColumns = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__UPDATE_ONLY_COLUMNS__");
 	}
+	List<Map<String, String>> keywords = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__KEYWORDS__");
+	String nullReplacementForString = ElementParameterParser.getValue(node, "__NULL_COALESCE_DEFAULT_FOR_VARCHAR__");
+	if (nullReplacementForString == null || nullReplacementForString.trim().isEmpty()) {
+		nullReplacementForString = "null";
+	}
+	String nullReplacementForNumber = ElementParameterParser.getValue(node, "__NULL_COALESCE_DEFAULT_FOR_NUMBER__");
+	if (nullReplacementForNumber == null || nullReplacementForNumber.trim().isEmpty()) {
+		nullReplacementForNumber = "null";
+	}
+	String nullReplacementForDate = ElementParameterParser.getValue(node, "__NULL_COALESCE_DEFAULT_FOR_DATE__");
+	if (nullReplacementForDate == null || nullReplacementForDate.trim().isEmpty()) {
+		nullReplacementForDate = "null";
+	}
 %>
 	de.jlo.talendcomp.oracle.merge.OracleMerge <%=cid%> = new de.jlo.talendcomp.oracle.merge.OracleMerge((java.sql.Connection) globalMap.get("conn_" + "<%=connCompName%>"));
+<%	if (keywords != null) {
+      for (Map<String, String> entry : keywords) { %>
+	<%=cid%>.addKeyword(<%=entry.get("WORD")%>);
+<%    } %>
+<%	} %>
+	<%=cid%>.setCoalesceNullTermStr(<%=nullReplacementForString%>);
+	<%=cid%>.setCoalesceNullTermNumber(<%=nullReplacementForNumber%>);
+	<%=cid%>.setCoalesceNullTermDate(<%=nullReplacementForDate%>);
    // use our own query as source
    String <%=cid%>_query = <%=sourceQuery%>;
 	<%=cid%>.setSourceSelectCode(<%=cid%>_query);

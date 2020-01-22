@@ -15,11 +15,11 @@ import org.apache.log4j.Logger;
 import de.jlo.datamodel.BasicDataType;
 import de.jlo.datamodel.Field;
 import de.jlo.datamodel.SQLProcedure;
+import de.jlo.datamodel.SQLProcedure.Parameter;
 import de.jlo.datamodel.SQLSchema;
 import de.jlo.datamodel.SQLSequence;
 import de.jlo.datamodel.SQLTable;
 import de.jlo.datamodel.SQLTrigger;
-import de.jlo.datamodel.SQLProcedure.Parameter;
 
 public class GenericDatabaseExtension implements DatabaseExtension {
 
@@ -82,7 +82,7 @@ public class GenericDatabaseExtension implements DatabaseExtension {
         } else if ("smallint".equalsIgnoreCase(field.getTypeName())) {
             field.setTypeSQLCode("smallint");
     		field.setBasicType(BasicDataType.INTEGER.getId());
-        } else if ("double".equalsIgnoreCase(field.getTypeName())) {
+        } else if ("double".equalsIgnoreCase(field.getTypeName()) || "number".equalsIgnoreCase(field.getTypeName()) || "decimal".equalsIgnoreCase(field.getTypeName())) {
         	field.setTypeSQLCode("double");
     		field.setBasicType(BasicDataType.DOUBLE.getId());
         } else if ("bool".equalsIgnoreCase(field.getTypeName())) {
