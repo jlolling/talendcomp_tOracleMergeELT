@@ -35,9 +35,6 @@ public class OracleMerge {
 	private String deleteWhereCondition = null;
 	private String currentMergeSQLCode = null;
 	private boolean doCommit = true;
-	private String coalesceNullTermStr = "'0'";
-	private String coalesceNullTermNumber= "-1";
-	private String coalesceNullTermDate= "to_date('1970-01-01','YYYY-MM-DD')";
 	private List<String> keywords = new ArrayList<>();
 	
 	public OracleMerge(Connection connection) {
@@ -167,20 +164,20 @@ public class OracleMerge {
 						sb.append(" and ");
 					}
 					if (field.isNullValueAllowed()) {
-						sb.append("coalesce(t.");
-						sb.append(field.getName());
-						sb.append(",");
-						sb.append(coalesceNullTermStr);
-						sb.append(")=coalesce(s.");
-						sb.append(field.getName());
-						sb.append(",");
-						sb.append(coalesceNullTermStr);
-						sb.append(")");
+						sb.append("((t.");
+						sb.append(getColumnName(field.getName()));
+						sb.append(" is null and s.");
+						sb.append(getColumnName(field.getName()));
+						sb.append(" is null) or (t.");
+						sb.append(getColumnName(field.getName()));
+						sb.append("=s.");
+						sb.append(getColumnName(field.getName()));
+						sb.append("))");
 					} else {
 						sb.append("t.");
-						sb.append(field.getName());
+						sb.append(getColumnName(field.getName()));
 						sb.append("=s.");
-						sb.append(field.getName());
+						sb.append(getColumnName(field.getName()));
 					}
 				} else {
 					throw new Exception("A primary key column cannot be set or compared with a fixed value.");
@@ -513,36 +510,6 @@ public class OracleMerge {
 		this.doCommit = doCommit;
 	}
 
-	public String getCoalesceNullTermStr() {
-		return coalesceNullTermStr;
-	}
-
-	public void setCoalesceNullTermStr(String coalesceNullTermStr) {
-		if (coalesceNullTermStr != null && coalesceNullTermStr.trim().isEmpty() == false) {
-			this.coalesceNullTermStr = coalesceNullTermStr;
-		}
-	}
-
-	public String getCoalesceNullTermNumber() {
-		return coalesceNullTermNumber;
-	}
-
-	public void setCoalesceNullTermNumber(String coalesceNullTermNumber) {
-		if (coalesceNullTermNumber != null && coalesceNullTermNumber.trim().isEmpty() == false) {
-			this.coalesceNullTermNumber = coalesceNullTermNumber;
-		}
-	}
-
-	public String getCoalesceNullTermDate() {
-		return coalesceNullTermDate;
-	}
-
-	public void setCoalesceNullTermDate(String coalesceNullTermDate) {
-		if (coalesceNullTermDate != null && coalesceNullTermDate.trim().isEmpty() == false) {
-			this.coalesceNullTermDate = coalesceNullTermDate;
-		}
-	}
-	
 	public void addKeyword(String keyword) {
 		if (keyword != null && keyword.trim().isEmpty() == false) {
 			keyword = keyword.trim().toUpperCase();
