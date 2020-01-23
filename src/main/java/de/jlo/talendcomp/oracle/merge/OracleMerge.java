@@ -39,40 +39,41 @@ public class OracleMerge {
 	
 	public OracleMerge(Connection connection) {
 		this.connection = connection;
+		keywords.add("ACCOUNT");
+		keywords.add("COMMENT");
+		keywords.add("COUNT");
 		keywords.add("DATE");
-		keywords.add("TEXT");
-		keywords.add("SIZE");
+		keywords.add("DATE");
 		keywords.add("FROM");
-		keywords.add("WHERE");
-		keywords.add("TO");
-		keywords.add("TIME");
-		keywords.add("TIMESTAMP");
-		keywords.add("INT");		
-		keywords.add("SYSTEM");
-		keywords.add("ZONE");
-		keywords.add("MASTER");
-		keywords.add("SCOPE");
-		keywords.add("NUMBER");
-		keywords.add("REFRESH");
-		keywords.add("SIZE");
-		keywords.add("VALUE");
-		keywords.add("VALUES");
-		keywords.add("SPECIFICATION");
 		keywords.add("HEADER");
-		keywords.add("TIME");
+		keywords.add("INT");		
+		keywords.add("LABEL");
 		keywords.add("LIMIT");
+		keywords.add("LIST");
+		keywords.add("MASTER");
+		keywords.add("MINIMUM");
+		keywords.add("NUMBER");
+		keywords.add("PASSWORD");
+		keywords.add("REFRESH");
+		keywords.add("SCOPE");
+		keywords.add("SIZE");
+		keywords.add("SPECIFICATION");
+		keywords.add("STORE");
+		keywords.add("SYSTEM");
 		keywords.add("TABLE");
 		keywords.add("TABLES");
-		keywords.add("COMMENT");
-		keywords.add("MINIMUM");
-		keywords.add("DATE");
-		keywords.add("ACCOUNT");
-		keywords.add("PASSWORD");
-		keywords.add("STORE");
+		keywords.add("TEXT");
+		keywords.add("TIME");
+		keywords.add("TIMESTAMP");
+		keywords.add("TO");
 		keywords.add("TYPE");
-		keywords.add("LABEL");
-		keywords.add("LIST");
-		keywords.add("UNLIMITED");	}
+		keywords.add("UNLIMITED");	
+		keywords.add("VALUE");
+		keywords.add("VALUES");
+		keywords.add("VARCHAR");
+		keywords.add("WHERE");
+		keywords.add("ZONE");	
+	}
 
 	public void init() throws Exception {
 		if (connection == null) {
