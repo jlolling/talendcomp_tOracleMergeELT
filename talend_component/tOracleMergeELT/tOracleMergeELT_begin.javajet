@@ -26,11 +26,7 @@
 	if (updateWhereEnabled == false || updateWhereCondition == null || updateWhereCondition.trim().isEmpty()) {
 		updateWhereCondition = "null";
 	}
-	boolean deleteWhereEnabled = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_DELETE_WHERE__"));
 	String deleteWhereCondition = ElementParameterParser.getValue(node, "__DELETE_WHERE__");
-	if (deleteWhereEnabled == false || deleteWhereCondition == null || deleteWhereCondition.trim().isEmpty()) {
-		deleteWhereCondition = "null";
-	}
 	boolean allowExcludeColumns = "true".equals(ElementParameterParser.getValue(node, "__ALLOW_EXCLUDE_COLUMNS__"));
 	List<Map<String, String>> excludeFieldList = null;
 	if (allowExcludeColumns) {
