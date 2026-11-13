@@ -43,7 +43,6 @@ public class OracleMerge {
 		keywords.add("COMMENT");
 		keywords.add("COUNT");
 		keywords.add("DATE");
-		keywords.add("DATE");
 		keywords.add("FROM");
 		keywords.add("HEADER");
 		keywords.add("INT");		

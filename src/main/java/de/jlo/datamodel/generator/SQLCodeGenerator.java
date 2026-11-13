@@ -1,3 +1,18 @@
+/**
+ * Copyright 2022 Jan Lolling jan.lolling@gmail.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.jlo.datamodel.generator;
 
 import java.sql.DatabaseMetaData;
@@ -29,15 +44,16 @@ import de.jlo.datamodel.ext.DatabaseExtension;
  */
 public class SQLCodeGenerator {
 	
-	private List<String> keywordList = new ArrayList<String>();
+	private final List<String> keywordList = new ArrayList<String>();
 	private String ec = "\"";
 	private static SQLCodeGenerator instance;
+	private Object lock = new Object();
 	
 	public void setEnclosureChar(String c) {
 		ec = c;
 	}
 	
-	public static SQLCodeGenerator getInstance() {
+	public synchronized static SQLCodeGenerator getInstance() {
 		if (instance == null) {
 			instance = new SQLCodeGenerator();
 		}
@@ -51,27 +67,48 @@ public class SQLCodeGenerator {
 		keywordList.add("table");
 		keywordList.add("view");
 		keywordList.add("date");
+		keywordList.add("time");
+		keywordList.add("datetime");
 		keywordList.add("timestamp");
 		keywordList.add("key");
 		keywordList.add("value");
 		keywordList.add("database");
 		keywordList.add("table");
 		keywordList.add("schema");
+		keywordList.add("order");
+		keywordList.add("limit");
+		keywordList.add("length");
+		keywordList.add("from");
+		keywordList.add("where");
+		keywordList.add("insert");
+		keywordList.add("update");
+		keywordList.add("delete");
+		keywordList.add("having");
+		keywordList.add("group");
+		keywordList.add("with");
+		keywordList.add("column");
 	}
 
 	public void addKeyword(String word) {
-		if (keywordList.contains(word) == false) {
-			keywordList.add(word);
+		synchronized(lock) {
+			if (word != null && word.trim().isEmpty() == false) {
+				word = word.trim();
+				if (keywordList.contains(word) == false) {
+					keywordList.add(word);
+				}
+			}
 		}
 	}
 	
 	public boolean containsKeyword(String identifier) {
-		if (identifier != null) {
-			String[] names = identifier.split("\\.");
-			for (String name : names) {
-				for (String w : keywordList) {
-					if (w.equalsIgnoreCase(name)) {
-						return true;
+		synchronized(lock) {
+			if (identifier != null) {
+				String[] names = identifier.split("\\.");
+				for (String name : names) {
+					for (String w : keywordList) {
+						if (w.equalsIgnoreCase(name)) {
+							return true;
+						}
 					}
 				}
 			}
@@ -520,7 +557,7 @@ public class SQLCodeGenerator {
         return sb.toString();
 	}
 
-	public String buildPSInsertStatement(SQLTable table, boolean fullName) {
+	public String buildInsertPreparedStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("insert into ");
@@ -550,7 +587,7 @@ public class SQLCodeGenerator {
 		return sb.toString();
 	}
 
-	public SQLStatement buildPSInsertSQLStatement(SQLTable table, boolean fullName) {
+	public SQLStatement buildInsertSQLStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final SQLStatement sqlPs = new SQLStatement();
 		sqlPs.setPrepared(true);
@@ -602,7 +639,7 @@ public class SQLCodeGenerator {
 		return sb.toString();
 	}
 
-	public String buildPSCountStatement(SQLTable table, boolean fullName) {
+	public String buildCountPreparedStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("select\n count(*)\nfrom ");
@@ -629,7 +666,7 @@ public class SQLCodeGenerator {
 		return sb.toString();
 	}
 
-	public SQLStatement buildPSCountSQLStatement(SQLTable table, boolean fullName) {
+	public SQLStatement buildCountSQLStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final StringBuilder sb = new StringBuilder();
 		final SQLStatement sqlPs = new SQLStatement();
@@ -670,7 +707,7 @@ public class SQLCodeGenerator {
 		return sqlPs;
 	}
 
-	public String buildPSUpdateStatement(SQLTable table, boolean fullName) {
+	public String buildUpdatePreparedStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("update ");
@@ -712,7 +749,7 @@ public class SQLCodeGenerator {
 		return sb.toString();
 	}
 
-	public String buildPSDeleteStatement(SQLTable table, boolean fullName) {
+	public String buildDeletePreparedStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final StringBuilder sb = new StringBuilder();
 		sb.append("delete from ");
@@ -741,7 +778,7 @@ public class SQLCodeGenerator {
 		return sb.toString();
 	}
 
-	public SQLStatement buildPSUpdateSQLStatement(SQLTable table, boolean fullName) {
+	public SQLStatement buildUpdateSQLStatement(SQLTable table, boolean fullName) {
     	setupEnclosureChar(table);
 		final SQLStatement sqlPs = new SQLStatement();
 		sqlPs.setPrepared(true);
